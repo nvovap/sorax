@@ -1,0 +1,12 @@
+body {
+  font: 1em 'Open Sans', Arial, sans-srif;
+  backgrount: #f2f2f2;
+  color: #333;
+}
+.container {
+  width: 60%;
+  margin: 0 auto;
+}
+svg {
+  cursor: pointer;
+}
