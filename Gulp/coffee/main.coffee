@@ -1,77 +1,119 @@
-# define ['extra'], (extra) -> 
-# 	console.log extra.reverse 'Sometimes the same is different'
+# ================
+# Util
+# ================
+
+polarToCartesian = (cx, cy, r, angle) ->
+	angle = (angle - 90) * Math.PI / 180
+	x: cx + r * Math.cos angle
+	y: cy + r * Math.sin angle
+
+discribeArc = (x, y, r, startAngle, endAngle, continueLine) ->
+	start 	= polarToCartesian x, y, r, startAngle &= 360
+	end 	= polarToCartesian x, y, r, endAngle &= 360
+	large = Math.abs(endAngle - startAngle) >= 180
+	alter = endAngle > startAngle
+	"#{if continueLine then 'L' else 'M'}#{start.x},#{start.y} 
+	 A#{r},#{r},0,
+	 #{if large then 1 else 0},
+	 #{if alter then 1 else 0}, #{end.x}, #{end.y}"
+
+describeSector = (x, y, r, r2, startAngle, endAngle) ->
+	"#{discribeArc x, y, r, startAngle, endAngle}
+	#{discribeArc x, y, r2, endAngle, startAngle,  on}Z"	
 
 
-paper = Snap 800, 400
-console.log paper
 
-style = 
-	fill: '#387'
-	stroke: '#222'
-	strokeWidth: 5 
-
-
- 
-path = paper
- 	.path ""
- 	.attr 
- 		stroke: '#222'
- 		fill: 'transparent'
-		strokeWidth: 3
-
-pathArray = []
-
-updatePath = ->
-	first = pathArray[0]
-	pathString = "M #{first.x}, #{first.y}"
-	for node in pathArray.slice 1
-		pathString = pathString + "T #{node.x}, #{node.y} "
-	path.attr d: pathString
+# ================
+# Class GUI
+# ================
+class GUI
+	constructor: (buttons) ->
+		@paper = Snap window.innerWidth, window.innerHeight
+		@nav = new RadialNav @paper, buttons
+		do @_bindEvents
 
 
-paper.click (e) ->
-	if e.target.tagName is 'svg'
-		paper
-			.circle e.offsetX,e.offsetY,15 
-			.attr style
-			.data 'i', pathArray.length
-			.drag (dx, dy, x, y) ->
-				@attr
-					cx: x
-					cy: y
-				currentNode = pathArray[@data 'i']
-				currentNode.x = x
-				currentNode.y = y
-				do updatePath 
+			
+		# ================
+		# Private
+		# ================
 
+	_bindEvents: ->
+		window.addEventListener 'resize', =>
+			@paper.attr
+				width:  window.innerWidth
+				height: window.innerHeight
+
+	
+# ================
+# Class RadialNav
+# ================
+class RadialNav
+	constructor: (paper, buttons) ->
+		@area = paper
+			.svg 0, 0, @size=500, @size
+			.addClass 'radialnav'
+		@center = @size / 2
+		@radOut = @size * .25 #Outer radius
+		@rInner = @radOut * .35 # Inner radius
+		@angle = 360 / buttons.lenght
+
+		@container = do @area.g
+
+		@updateButtons buttons
+
+		# ================
+		# Private
+		# ================
 		
-		pathArray.push
-			x: e.offsetX
-			y: e.offsetY
+	_sector: ->
+		@area
+			.path describeSector @center, @center, @radOut, @rInner, 0, @angle
+			.addClass 'radialnav-sector'
 
-		do updatePath
+	_button: (btn, sector) ->
+		@area
+			.g sector
+
+	# ================
+	# Public
+	# ================
+
+	updateButtons: (buttons) ->
+		do @container.clear
+		for btn, i in buttons
+			button = @_button btn, @_sector()
+			button.transform "r#{@angle * i},#{@center},#{@center}"
+			@container.add button
 
 
+# ================
+# Test
+# ================
 
-# pathString = path.attr 'd'
-# 		coords = "#{e.offsetX},#{e.offsetY}"
-# 		path.attr
-# 			d: if pathString then pathString + "L #{coords} " else  "M #{coords}"
+gui = new GUI [
+	{
+		icon: 'search'
+		action: -> console.log 'Opening Search'
+	}
+	{
+		icon: 'search'
+		action: -> console.log 'Opening Search'
+	}
+	{
+		icon: 'search'
+		action: -> console.log 'Opening Search'
+	}
+	{
+		icon: 'search'
+		action: -> console.log 'Opening Search'
+	}
+]
 
 
-
-
-# circle = paper 
-# 	.circle 150,150,100 
-# 	.attr style
-# 	.drag()
-
- 
- # rect = paper
- # 	.rect 300,50,300,200
- # 	.attr style
-
- # path = paper
- # 	.path "M 300,50 L 500,300 L 700,250 L600,100 L 500,150 Z"
- # 	.attr style
- # 	.drag()
+# gui.paper
+# 	.path describeSector 200, 200, 120, 50, 0, 90
+# 	.attr
+# 		fill: 'transparent'
+# 		stroke: '#fff'
+# 		strokeWidth: 4

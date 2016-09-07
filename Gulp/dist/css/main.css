@@ -1,12 +1,18 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,
 body {
-  font: 1em 'Open Sans', Arial, sans-srif;
-  backgrount: #f2f2f2;
-  color: #333;
+	height: 100%;
+	width: 100%;
 }
-.container {
-  width: 60%;
-  margin: 0 auto;
+
+body {
+  background: url(../back.jpg);
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
 }
-svg {
-  cursor: pointer;
-}
+

@@ -67,6 +67,14 @@ app.route('/new')
 	})
 
 
+app.get('/h', function(req, res){
+	//res.send('Hello there!')
+
+	//console.log(res)
+
+	res.json({ message: 'hey' })
+	//res.send('\n')
+})
 
 
 app.get('/about', function(req, res){

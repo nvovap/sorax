@@ -68,12 +68,12 @@ gulp.task 'coffee', ->
 
 gulp.task 'watch', -> 
 	gulp.watch 'jade/*.jade',['jade']
-	gulp.watch 'stylus/*.styl',['stylus']
+	# gulp.watch 'stylus/*.styl',['stylus']
 	gulp.watch 'coffee/*.coffee',['coffee']  
 
 
 
-gulp.task 'default', ['jade', 'stylus', 'coffee', 'connect','watch'] 
+gulp.task 'default', ['jade', 'coffee', 'connect','watch'] 
 
 
 
