@@ -68,7 +68,7 @@ gulp.task 'coffee', ->
 
 gulp.task 'watch', -> 
 	gulp.watch 'jade/*.jade',['jade']
-	# gulp.watch 'stylus/*.styl',['stylus']
+	gulp.watch 'dist/css/*.css', ['jade']
 	gulp.watch 'coffee/*.coffee',['coffee']  
 
 

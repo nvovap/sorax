@@ -1,3 +1,5 @@
+iconsPath = 'icons.svg'
+
 # ================
 # Util
 # ================
@@ -29,8 +31,10 @@ describeSector = (x, y, r, r2, startAngle, endAngle) ->
 class GUI
 	constructor: (buttons) ->
 		@paper = Snap window.innerWidth, window.innerHeight
-		@nav = new RadialNav @paper, buttons
-		do @_bindEvents
+
+		Snap.load iconsPath, (icons) => 
+			@nav = new RadialNav @paper, buttons, icons
+			do @_bindEvents
 
 
 			
@@ -49,18 +53,18 @@ class GUI
 # Class RadialNav
 # ================
 class RadialNav
-	constructor: (paper, buttons) ->
+	constructor: (paper, buttons, icons) ->
 		@area = paper
 			.svg 0, 0, @size=500, @size
 			.addClass 'radialnav'
 		@center = @size / 2
 		@radOut = @size * .25 #Outer radius
 		@rInner = @radOut * .35 # Inner radius
-		@angle = 360 / buttons.lenght
+		@angle = 360 / buttons.length 
 
 		@container = do @area.g
 
-		@updateButtons buttons
+		@updateButtons buttons, icons
 
 		# ================
 		# Private
@@ -71,43 +75,54 @@ class RadialNav
 			.path describeSector @center, @center, @radOut, @rInner, 0, @angle
 			.addClass 'radialnav-sector'
 
-	_button: (btn, sector) ->
+	_button: (btn, sector, icon) ->
 		@area
-			.g sector
+			.g sector, icon
+
+	_icon: (btn, icons) ->
+		icon = icons
+			.select "##{btn.icon}"
+			.addClass 'radialnav-icon'
+			
 
 	# ================
 	# Public
 	# ================
 
-	updateButtons: (buttons) ->
+	updateButtons: (buttons, icons) ->
 		do @container.clear
 		for btn, i in buttons
-			button = @_button btn, @_sector()
+			button = @_button btn, @_sector(), @_icon btn, icons
 			button.transform "r#{@angle * i},#{@center},#{@center}"
 			@container.add button
 
-
+ 
 # ================
 # Test
 # ================
 
 gui = new GUI [
 	{
-		icon: 'search'
+		icon: 'CAMERA'
 		action: -> console.log 'Opening Search'
 	}
 	{
-		icon: 'search'
+		icon: 'CART'
 		action: -> console.log 'Opening Search'
 	}
 	{
-		icon: 'search'
+		icon: 'CHAT'
 		action: -> console.log 'Opening Search'
 	}
 	{
-		icon: 'search'
+		icon: 'BLUETOOTH'
 		action: -> console.log 'Opening Search'
 	}
+	{
+		icon: 'BATTERY'
+		action: -> console.log 'Opening Search'
+	}
+	
 ]
 
 

@@ -1,5 +1,7 @@
 (function() {
-  var GUI, RadialNav, describeSector, discribeArc, gui, polarToCartesian;
+  var GUI, RadialNav, describeSector, discribeArc, gui, iconsPath, polarToCartesian;
+
+  iconsPath = 'icons.svg';
 
   polarToCartesian = function(cx, cy, r, angle) {
     angle = (angle - 90) * Math.PI / 180;
@@ -25,8 +27,12 @@
   GUI = (function() {
     function GUI(buttons) {
       this.paper = Snap(window.innerWidth, window.innerHeight);
-      this.nav = new RadialNav(this.paper, buttons);
-      this._bindEvents();
+      Snap.load(iconsPath, (function(_this) {
+        return function(icons) {
+          _this.nav = new RadialNav(_this.paper, buttons, icons);
+          return _this._bindEvents();
+        };
+      })(this));
     }
 
     GUI.prototype._bindEvents = function() {
@@ -45,31 +51,36 @@
   })();
 
   RadialNav = (function() {
-    function RadialNav(paper, buttons) {
+    function RadialNav(paper, buttons, icons) {
       this.area = paper.svg(0, 0, this.size = 500, this.size).addClass('radialnav');
       this.center = this.size / 2;
       this.radOut = this.size * .25;
       this.rInner = this.radOut * .35;
-      this.angle = 360 / buttons.lenght;
+      this.angle = 360 / buttons.length;
       this.container = this.area.g();
-      this.updateButtons(buttons);
+      this.updateButtons(buttons, icons);
     }
 
     RadialNav.prototype._sector = function() {
       return this.area.path(describeSector(this.center, this.center, this.radOut, this.rInner, 0, this.angle)).addClass('radialnav-sector');
     };
 
-    RadialNav.prototype._button = function(btn, sector) {
-      return this.area.g(sector);
+    RadialNav.prototype._button = function(btn, sector, icon) {
+      return this.area.g(sector, icon);
     };
 
-    RadialNav.prototype.updateButtons = function(buttons) {
+    RadialNav.prototype._icon = function(btn, icons) {
+      var icon;
+      return icon = icons.select("#" + btn.icon).addClass('radialnav-icon');
+    };
+
+    RadialNav.prototype.updateButtons = function(buttons, icons) {
       var btn, button, i, j, len, results;
       this.container.clear();
       results = [];
       for (i = j = 0, len = buttons.length; j < len; i = ++j) {
         btn = buttons[i];
-        button = this._button(btn, this._sector());
+        button = this._button(btn, this._sector(), this._icon(btn, icons));
         button.transform("r" + (this.angle * i) + "," + this.center + "," + this.center);
         results.push(this.container.add(button));
       }
@@ -82,22 +93,27 @@
 
   gui = new GUI([
     {
-      icon: 'search',
+      icon: 'CAMERA',
       action: function() {
         return console.log('Opening Search');
       }
     }, {
-      icon: 'search',
+      icon: 'CART',
       action: function() {
         return console.log('Opening Search');
       }
     }, {
-      icon: 'search',
+      icon: 'CHAT',
       action: function() {
         return console.log('Opening Search');
       }
     }, {
-      icon: 'search',
+      icon: 'BLUETOOTH',
+      action: function() {
+        return console.log('Opening Search');
+      }
+    }, {
+      icon: 'BATTERY',
       action: function() {
         return console.log('Opening Search');
       }
