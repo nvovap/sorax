@@ -10,10 +10,22 @@ body {
 }
 
 body {
-  background: url(../back.jpg);
-  background-position: center;
-  background-size: cover;
-  overflow: hidden;
+	-webkit-font-smoothing: antialiased;
+	background: url(../back.jpg);
+	background-position: center;
+	background-size: cover;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.hide {
+	display: none;
+}
+
+.radialnav {
+	-webkit=user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
 
 .radialnav-sector {
@@ -22,3 +34,34 @@ body {
 	stroke-width: 1;
 	transition: all .4s;
 }
+
+.radialnav-sector.active {
+	fill: rgba(255,255,255,.9);
+}
+
+.radialnav-icon {
+	pointer-ebents: none;
+	fill: #eee;
+	transition: all .4s;
+}
+
+.radialnav-icon.active {
+	fill: #333;
+}
+
+.radialnav-hint {
+	fill: #eee;
+	font: bold .95em 'PT Sans', Arial, sams-serif;
+	text-anchor: middle;
+	text-transform: uppercase;
+	transition: all .4s;
+	opacity: 0;
+}
+
+.radialnav-hint.active {
+	opacity: 1;
+}
+
+
+
+
